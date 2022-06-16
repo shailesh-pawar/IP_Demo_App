@@ -5,6 +5,7 @@ import com.techlearn.ip_es.springbootapp.exception.APIErrorResponse;
 import com.techlearn.ip_es.springbootapp.exception.DataServicesException;
 import com.techlearn.ip_es.springbootapp.model.IpAddress;
 import com.techlearn.ip_es.springbootapp.services.IpAddressService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
 
 @RestController
+@Slf4j
 @RequestMapping("/ipaddress")
 @EnableAutoConfiguration
 @Tag(name = "IPAddress", description = "Endpoints for IpAddress")
@@ -60,7 +62,8 @@ public class IpAddressController
 	})
 	@GetMapping("/{ipValue}")
 	public ResponseEntity<List<IpAddress>> getIpAddress(@PathVariable("ipValue") String ipValue)
-	{
+			throws DataServicesException {
+		log.info("Getting IPAdress details: {}", ipValue);
 		return ResponseEntity.ok(ipAddressService.getIpDetailsByValue(ipValue));
 	}
 
@@ -86,7 +89,8 @@ public class IpAddressController
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = APIErrorResponse.class)))
 	})
 	@PostMapping("/")
-	public ResponseEntity<IpAddress> createRecord(@Valid  @RequestBody IpAddressDto ipAddressDto) throws ParseException, DataServicesException {
+	public ResponseEntity<IpAddress> createRecord(@Valid  @RequestBody IpAddressDto ipAddressDto) throws ParseException, DataServicesException
+	{
 		return ResponseEntity.ok(ipAddressService.save(ipAddressDto));
 	}
 }
